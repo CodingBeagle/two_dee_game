@@ -1,0 +1,2 @@
+# Ignore the entire target directory, relative to the .gitignore file.
+/target/
