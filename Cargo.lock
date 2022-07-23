@@ -32,6 +32,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "beagle_glfw"
+version = "0.1.0"
+dependencies = [
+ "bindgen",
+]
+
+[[package]]
 name = "bindgen"
 version = "0.53.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -291,7 +298,7 @@ dependencies = [
 name = "two_dee_game"
 version = "0.1.0"
 dependencies = [
- "bindgen",
+ "beagle_glfw",
 ]
 
 [[package]]

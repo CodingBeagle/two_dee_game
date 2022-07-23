@@ -1,10 +1,9 @@
-[package]
-name = "two_dee_game"
-version = "0.1.0"
-edition = "2021"
+# Workspaces are a Cargo feature that can help you manage multiple related packages that are developed in tandem.
+# In this case, I use it to split the binary (the game, the application...) from the crates I have which offers bindings to various
+# C libraries, such as GLFW.
+[workspace]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-# build-dependencies are used for dependencies needed during the build process, for build scripts (build.rs).
-[build-dependencies]
-bindgen = "0.53.1"
+members = [
+    "two_dee_game",
+    "beagle_glfw"
+]

@@ -4,11 +4,11 @@
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
-fn main() {
-    println!("Hello, world!");
-
-    unsafe {
-        let glfw_init_result = glfwInit();
-        println!("{}", glfw_init_result);
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        let result = 2 + 2;
+        assert_eq!(result, 4);
     }
 }
