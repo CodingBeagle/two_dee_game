@@ -37,7 +37,12 @@ fn main() {
             panic!("Failed to create window: {}", get_latest_glfw_error_description());
         }
 
+        // Make the OpenGL context of our window current
+        // This is required before we can use the context, and before we can do things suchas loading extensions
+        glfwMakeContextCurrent(main_window);
+
         println!("**** OpenGL Information ****");
+
         println!("");
 
         while glfwWindowShouldClose(main_window) == 0 {
