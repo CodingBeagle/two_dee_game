@@ -59,6 +59,7 @@ fn main() {
         while glfwWindowShouldClose(main_window) == 0 {
             // Process events that are already in the event queue, then return immediately.
             // Processing events will cause the window and input callbacks associated with those events to be called.
+            glfwSwapBuffers(main_window);
             glfwPollEvents();
         }
 
