@@ -4,6 +4,7 @@
 [workspace]
 
 members = [
+    "glad",
     "two_dee_game",
     "beagle_glfw"
 ]

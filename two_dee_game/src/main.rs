@@ -1,5 +1,7 @@
-use std::ffi::{CString};
+use std::ffi::{CString, CStr};
+use std::os::raw::c_char;
 use std::ptr;
+use glad::{gl};
 use beagle_glfw::*;
 
 fn main() {
@@ -41,9 +43,18 @@ fn main() {
         // This is required before we can use the context, and before we can do things suchas loading extensions
         glfwMakeContextCurrent(main_window);
 
-        println!("**** OpenGL Information ****");
+        // Load OpenGL extensions using GLAD
+        gl::load(|e| -> *const std::ffi::c_void 
+            {
+                let f = CString::new(e).expect("Failed to create CString");
+                glfwGetProcAddress(f.as_ptr()).expect("Failed to get OpenGL extension function pointer") as *const std::os::raw::c_void
+            });
+        
+        let open_gl_version = raw_string_to_string(gl::GetString(gl::VERSION) as *const _);
 
-        println!("");
+        println!("**** OpenGL Context Info ****");
+        println!("OpenGL Version: {}", open_gl_version);
+        println!("*****************************");
 
         while glfwWindowShouldClose(main_window) == 0 {
             // Process events that are already in the event queue, then return immediately.
@@ -65,6 +76,16 @@ fn main() {
 fn new_ffi_string(str: &str) -> CString {
     let error_message = format!("Failed to generate CString from {}", str);
     CString::new(str).expect(&error_message)
+}
+
+// TODO: Raw C-string to temporarily borrowed Rust String
+// I'm still not sure how best to handle creating temporarily borrowed C-strings in Rust
+// Right now I know I'm doing something not all that efficient. I'm creating an owned Rust string from the underlying data.
+// Found example code here: https://github.com/glium/glium/blob/master/src/context/extensions.rs
+fn raw_string_to_string(raw_string: *const c_char) -> String {
+    unsafe {
+        String::from_utf8(CStr::from_ptr(raw_string as *const _).to_bytes().to_vec()).expect("Failed to create string from raw string!")
+    }
 }
 
 fn get_latest_glfw_error_description() -> String {

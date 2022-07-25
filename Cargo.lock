@@ -135,6 +135,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "glad"
+version = "0.1.0"
+
+[[package]]
 name = "glob"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -299,6 +303,7 @@ name = "two_dee_game"
 version = "0.1.0"
 dependencies = [
  "beagle_glfw",
+ "glad",
 ]
 
 [[package]]

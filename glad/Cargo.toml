@@ -1,10 +1,8 @@
 [package]
-name = "two_dee_game"
+name = "glad"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-glad = { path = "../glad" }
-beagle_glfw = { path = "../beagle_glfw" }
