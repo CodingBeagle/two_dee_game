@@ -60,7 +60,7 @@ fn main() {
         gl::Enable(gl::DEBUG_OUTPUT_SYNCHRONOUS_ARB);
 
         // Provide an error callback
-        gl::DebugMessageCallbackARB(DebugMessageCallbackARB, ptr::null());
+        gl::DebugMessageCallbackARB(debug_message_callback_arb, ptr::null());
 
         while glfwWindowShouldClose(main_window) == 0 {
             // Process events that are already in the event queue, then return immediately.
@@ -75,7 +75,8 @@ fn main() {
     }
 }
 
-extern "system" fn DebugMessageCallbackARB(source: u32, msg_type: u32, id: u32, severity: u32, length: i32, message: *const i8, user_param: *mut std::os::raw::c_void) {
+// TODO: Why do I need to define functions used as callbacks in FFI as "extern 'system'"?
+extern "system" fn debug_message_callback_arb(_source: u32, _msg_type: u32, _id: u32, _severity: u32, _length: i32, message: *const i8, _user_param: *mut std::os::raw::c_void) {
     unsafe {
         let msg = CStr::from_ptr(message).to_str().expect("Failed to convert OpenGL debug message to STR!");
 
