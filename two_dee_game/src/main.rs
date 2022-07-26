@@ -52,7 +52,15 @@ fn main() {
 
         println!("**** OpenGL Context Info ****");
         println!("OpenGL Version: {}", raw_string_to_borrowed_string(gl::GetString(gl::VERSION) as _));
+        println!("Shading Language Version: {}", raw_string_to_borrowed_string(gl::GetString(gl::SHADING_LANGUAGE_VERSION) as _));
         println!("*****************************");
+
+        // Enable debug output
+        // In Debug contexts, it should start out enabled. However I do it do be explicit, anyways.
+        gl::Enable(gl::DEBUG_OUTPUT_SYNCHRONOUS_ARB);
+
+        // Provide an error callback
+        gl::DebugMessageCallbackARB(DebugMessageCallbackARB, ptr::null());
 
         while glfwWindowShouldClose(main_window) == 0 {
             // Process events that are already in the event queue, then return immediately.
@@ -64,6 +72,16 @@ fn main() {
         // Before terminating your application, you should terminate the GLFW library if it has been initialized
         // If you don't, global system settings changed by GLFW might not be restored properly.
         glfwTerminate();
+    }
+}
+
+extern "system" fn DebugMessageCallbackARB(source: u32, msg_type: u32, id: u32, severity: u32, length: i32, message: *const i8, user_param: *mut std::os::raw::c_void) {
+    unsafe {
+        let msg = CStr::from_ptr(message).to_str().expect("Failed to convert OpenGL debug message to STR!");
+
+        println!("!!!! OpenGL Error !!!!");
+        println!("{}", msg);
+        println!("**********************")
     }
 }
 
@@ -82,17 +100,13 @@ fn new_ffi_string(str: &str) -> CString {
 // Reason being: i8 and u8 are both of the same size, so no mis-alignment will occur when doing pointer arithmetic.
 // Additionally, whether something is signed or unsigned only matters when interpreting the data as NUMBERS, but since this is strings
 // we don't care about that.
-fn raw_string_to_borrowed_string<'a>(raw_string: *const c_char) -> &'a str {
-    unsafe {
-        CStr::from_ptr(raw_string).to_str().expect("Failed to create str!")
-    }
+unsafe fn raw_string_to_borrowed_string<'a>(raw_string: *const c_char) -> &'a str {
+    CStr::from_ptr(raw_string).to_str().expect("Failed to create str!")
 }
 
-fn get_latest_glfw_error_description() -> String {
-    unsafe {
-        let mut error_description_raw: *const i8 = ptr::null_mut();
-        glfwGetError(&mut error_description_raw);
-        let error_description = CString::from_raw(error_description_raw as *mut i8);
-        error_description.into_string().expect("Failed to convert GLFW Error description into String")
-    }
+unsafe fn get_latest_glfw_error_description() -> String {
+    let mut error_description_raw: *const i8 = ptr::null_mut();
+    glfwGetError(&mut error_description_raw);
+    let error_description = CString::from_raw(error_description_raw as *mut i8);
+    error_description.into_string().expect("Failed to convert GLFW Error description into String")
 }
