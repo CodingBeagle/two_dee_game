@@ -49,11 +49,9 @@ fn main() {
                 let f = CString::new(e).expect("Failed to create CString");
                 glfwGetProcAddress(f.as_ptr()).expect("Failed to get OpenGL extension function pointer") as *const std::os::raw::c_void
             });
-        
-        let open_gl_version = raw_string_to_string(gl::GetString(gl::VERSION) as *const _);
 
         println!("**** OpenGL Context Info ****");
-        println!("OpenGL Version: {}", open_gl_version);
+        println!("OpenGL Version: {}", raw_string_to_borrowed_string(gl::GetString(gl::VERSION) as _));
         println!("*****************************");
 
         while glfwWindowShouldClose(main_window) == 0 {
@@ -79,13 +77,14 @@ fn new_ffi_string(str: &str) -> CString {
     CString::new(str).expect(&error_message)
 }
 
-// TODO: Raw C-string to temporarily borrowed Rust String
-// I'm still not sure how best to handle creating temporarily borrowed C-strings in Rust
-// Right now I know I'm doing something not all that efficient. I'm creating an owned Rust string from the underlying data.
-// Found example code here: https://github.com/glium/glium/blob/master/src/context/extensions.rs
-fn raw_string_to_string(raw_string: *const c_char) -> String {
+// When working with strings, I don't have to worry about conversion between *const i8 and *const u8. So long as I don't care about 
+// Arithmetic operations on each byte.
+// Reason being: i8 and u8 are both of the same size, so no mis-alignment will occur when doing pointer arithmetic.
+// Additionally, whether something is signed or unsigned only matters when interpreting the data as NUMBERS, but since this is strings
+// we don't care about that.
+fn raw_string_to_borrowed_string<'a>(raw_string: *const c_char) -> &'a str {
     unsafe {
-        String::from_utf8(CStr::from_ptr(raw_string as *const _).to_bytes().to_vec()).expect("Failed to create string from raw string!")
+        CStr::from_ptr(raw_string).to_str().expect("Failed to create str!")
     }
 }
 
